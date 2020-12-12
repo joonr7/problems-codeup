@@ -10,7 +10,6 @@
 '''output
 -99 98
 '''
-import time
 def input_reader():
     solution_num = int(input())
     solution_list = list(map(int, input().split(" ")))
@@ -22,61 +21,35 @@ def input_reader():
     # Sort
     solution_list.sort()
 
-    # devide into acid and alkali
-    list_acid = []
-    list_alkali = []
-    for solution in solution_list:
-        if solution > 0:
-            list_acid.append(solution)
-        else:
-            list_alkali.append(solution)
+    return solution_num, solution_list
 
-    list_alkali.reverse()
-    return list_acid, list_alkali
+def findBestPair(num, sorted_list):
+    index_l = 0
+    index_r = num - 1
 
-def makeAbsOrderList(list_a, list_b):
-    abs_arr_list = []
+    best_il = index_l
+    best_ir = index_r
 
-    if len(list_a) == 0:
-        return list_b
-    if len(list_b) == 0:
-        return list_a
+    min_sum = sorted_list[best_il] + sorted_list[best_ir]
 
-    a,b = list_a.pop(0),list_b.pop(0)
-    while(True):
-        if abs(a) < abs(b):
-            abs_arr_list.append(a)
-            try:
-                a = list_a.pop(0)
-            except:
-                abs_arr_list.append(b)
-                for b in list_b:
-                    abs_arr_list.append(b)
-                break    
-        else:
-            abs_arr_list.append(b)
-            try:
-                b = list_b.pop(0)
-            except:
-                abs_arr_list.append(a)
-                for a in list_a:
-                    abs_arr_list.append(a)
+    while index_l < index_r:
+        temp_sum = sorted_list[index_l] + sorted_list[index_r]
+        if abs(temp_sum) < abs(min_sum):
+            min_sum = temp_sum
+            best_il = index_l
+            best_ir = index_r
+            if temp_sum == 0:
                 break
-    return abs_arr_list
+        if temp_sum < 0:
+            index_l += 1
+        else: 
+            index_r -= 1
 
-def findBestPair(abs_arr_list):
-    min_sum = 2000000000
-    for i in range(len(abs_arr_list)-1):
-        if abs(abs_arr_list[i] + abs_arr_list[i+1]) < min_sum:
-            min_sum = abs(abs_arr_list[i] + abs_arr_list[i+1])
-            best_pair = [abs_arr_list[i], abs_arr_list[i+1]]
-    best_pair.sort()
-    return best_pair
+    return [sorted_list[best_il], sorted_list[best_ir]]
 
 def main(): 
-    sorted_acid_list, sorted_alkali_list = input_reader()
-    abs_arr_list = makeAbsOrderList(sorted_acid_list, sorted_alkali_list)
-    best_pair = findBestPair(abs_arr_list)
+    solution_num, sorted_solution_list = input_reader()
+    best_pair = findBestPair(solution_num, sorted_solution_list)
     print(best_pair[0], best_pair[1])
 
 if __name__ == "__main__":
